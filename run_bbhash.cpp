@@ -1,10 +1,10 @@
 #include <iostream>
 #include "bbhash.hpp"
 #include "xxhash.h"
-#include <sdsl/rank_support_v.hpp>
+//#include <sdsl/rank_support_v.hpp>
 
 using namespace std;
-using namespace sdsl;
+//using namespace sdsl;
 
 int main()
 {

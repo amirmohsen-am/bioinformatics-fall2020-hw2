@@ -1,10 +1,11 @@
-#include <sdsl/rank_support_v.hpp>
+//#include <sdsl/rank_support_v.hpp>
 #include <vector>
 #include "xxhash.h"
 #include <time.h>
+#include "hw1/rank_support/rank_support.hpp"
 
 using namespace std;
-using namespace sdsl;
+//using namespace sdsl;
 
 typedef uint64_t size_type;
 
@@ -17,7 +18,7 @@ class bb_level
 	bit_vector A;
 	bit_vector C;
 	
-	rank_support_v<1> r;
+	rank_support r;
 	
 
 	// DEBUG
@@ -57,7 +58,7 @@ class bb_level
 		//util::init_support(r, &A);
 
 
-		r = rank_support_v<1>(&A);
+		r = rank_support(&A);
 
 		return collisions;
 
@@ -76,6 +77,7 @@ class bb_level
 
 	size_type weight()
 	{
+		/*
 		cerr << A << endl;
 		cerr << r.size() << endl;
 		cerr << r.rank(0) << endl;
@@ -85,12 +87,15 @@ class bb_level
 		cerr << r.rank(4) << endl;
 		rank_support_v<1> tt(&A);
 
+		*/
+		/*
 		cerr << tt.rank(0) << endl;
 		cerr << tt.rank(1) << endl;
 		cerr << tt.rank(2) << endl;
 		cerr << tt.rank(3) << endl;
 		cerr << tt.rank(4) << endl;
-		return r.rank(size-1);
+		*/
+		return r.rank1(size-1);
 	}
 
 	
@@ -123,7 +128,7 @@ class bbhash
 			//level.resize(level.size()+1);
 			level.push_back(bb_level<KeyType>());
 			collisions = level.back().init(collisions, gamma);
-			cerr << "D" << level.back().r.size() << endl;
+			cerr << "D" << level.back().r.b->size() << endl;
 			//for (size_t k = 0; k < level.size(); k++)
 			//	cerr << "X" << level[k].r.size() << endl;
 		}
@@ -136,6 +141,11 @@ class bbhash
 				cerr << key << " ";
 			cerr << endl;
 		}
+		for (size_t k = 0; k < level.size(); k++)
+		{
+			cerr << "X" << level[k].r.b->size() << endl;
+			cerr << "D" << level[k].A.size() << endl;
+		}
 		
 	}
 
@@ -146,10 +156,10 @@ class bbhash
 		{
 			size_type ind = level[i].get_hash(key);
 			cerr << "ind: " << ind << endl;
-			cerr << i << " " << ind << " " << level[i].A.size() << " " << level[i].r.size() << endl;
+		//	cerr << i << " " << ind << " " << level[i].A.size() << " " << level[i].r.size() << endl;
 			if (level[i].A[ind] == 1)
 			{
-				return sum + level[i].r.rank(ind);
+				return sum + level[i].r.rank1(ind);
 			}
 			sum += level[i].weight();
 		}
