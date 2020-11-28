@@ -14,16 +14,26 @@ uint64_t get_log(uint64_t x)
 	return res+1;
 }
 
-class rank_support
-{
-	public:
-	bit_vector* b;
-	vector <bit_vector> R1, R2;
-	uint64_t sz1, sz2;
-	uint64_t R1_bits, R2_bits;
-	uint64_t R3_bits;
+class rank_support {
+public:
+    bit_vector *b;
+    vector<bit_vector> R1, R2;
+    uint64_t sz1, sz2;
+    uint64_t R1_bits, R2_bits;
+    uint64_t R3_bits;
 
-	bit_vector **R3; 
+    bit_vector **R3;
+
+    rank_support(const rank_support &obj)
+    {
+        sz1 = obj.sz1;
+        sz2 = obj.sz2;
+        R1 = obj.R1;
+        R2 = obj.R2;
+        R1_bits = obj.R1_bits;
+        R2_bits = obj.R2_bits;
+        R3_bits = obj.R3_bits;
+    }
 
 	rank_support()
 	{

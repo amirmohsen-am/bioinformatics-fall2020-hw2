@@ -145,30 +145,30 @@ class bbhash
 		while (!collisions.empty())
 		{
 			//level.resize(level.size()+1);
-			for (size_t k = 0; k < level.size(); k++)
-			{
-				printf("%02x\n", ((char*)level[k].r->b)[0]);
-				cerr << "XX1" << *(level[k].r->b) << endl;
-				cerr << "DX1" << level[k].A << endl;
-			}
+//			for (size_t k = 0; k < level.size(); k++)
+//			{
+//				printf("%02x\n", ((char*)level[k].r->b)[0]);
+//				cerr << "XX1" << *(level[k].r->b) << endl;
+//				cerr << "DX1" << level[k].A << endl;
+//			}
 			cerr << collisions.size() << endl;
 			level.push_back(bb_level<KeyType>());
-			for (size_t k = 0; k < level.size()-1; k++)
-			{
-				cerr << "DX2" << level[k].A << endl;
-				printf("%02x\n", ((char*)level[k].r->b)[0]);
-				cerr << "XX2" << *(level[k].r->b) << endl;
-			}
+//			for (size_t k = 0; k < level.size()-1; k++)
+//			{
+//				cerr << "DX2" << level[k].A << endl;
+//				printf("%02x\n", ((char*)level[k].r->b)[0]);
+//				cerr << "XX2" << *(level[k].r->b) << endl;
+//			}
 			collisions = level.back().init(collisions, gamma);
 //			cerr << "XXX" << endl;
 //			cerr << "DDD" << (*level.back().r.b) << endl;
 			//for (size_t k = 0; k < level.size(); k++)
 			//	cerr << "X" << level[k].r.size() << endl;
-			for (size_t k = 0; k < level.size(); k++)
-			{
-				cerr << "XX" << *(level[k].r->b) << endl;
-				cerr << "DX" << level[k].A << endl;
-			}
+//			for (size_t k = 0; k < level.size(); k++)
+//			{
+//				cerr << "XX" << *(level[k].r->b) << endl;
+//				cerr << "DX" << level[k].A << endl;
+//			}
 		}
 
 		cerr << level.size() << endl;
