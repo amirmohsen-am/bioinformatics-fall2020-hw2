@@ -14,3 +14,9 @@ git clone https://github.com/simongog/sdsl-lite.git
 cd sdsl-lite
 sudo ./install.sh /usr/local/
 ```
+
+## running
+
+```
+g++ -std=c++11 -Wall -DNDEBUG -O3 -I/usr/local/include -L/usr/local/lib run_bbhash.cpp xxhash.c -lsdsl -ldivsufsort -ldivsufsort64 && ./a.out
+```
