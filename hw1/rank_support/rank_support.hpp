@@ -33,6 +33,17 @@ public:
         R1_bits = obj.R1_bits;
         R2_bits = obj.R2_bits;
         R3_bits = obj.R3_bits;
+
+        b = new bit_vector();
+        *b = *obj.b;
+
+        R3 = new bit_vector*[1<<sz2];
+        for (uint64_t i = 0; i < (1<<sz2); i++) {
+            R3[i] = new bit_vector[sz2];
+            for (int j = 0; j < sz2; j++)
+                R3[i][j] = obj.R3[i][j];
+        }
+
     }
 
 	rank_support()

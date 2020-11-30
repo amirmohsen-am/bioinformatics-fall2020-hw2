@@ -21,20 +21,13 @@ class bb_level
 	bit_vector A;
 	bit_vector C;
 	
-	rank_support *r;
-	
+	rank_support r;
+
 
 	// DEBUG
 	vector <KeyType> keys;
 	
 //	bbhash *bb;
-
-	bb_level()
-	{
-	    size = seed = 0;
-	    r = NULL;
-		return;
-	}
 
 	vector<KeyType> init(vector<KeyType> keys, size_type gamma)
 	{
@@ -73,10 +66,7 @@ class bb_level
 		}
 		//util::init_support(r, &A);
 
-		cerr << "T" << A << endl;
-		r = new rank_support(&A);
-		cerr << "T" << (*r->b) << endl;
-//		cerr << "T" << (*r.b) << endl;
+		r = rank_support(&A);
 
 		return collisions;
 
@@ -103,18 +93,9 @@ class bb_level
 		cerr << r.rank(2) << endl;
 		cerr << r.rank(3) << endl;
 		cerr << r.rank(4) << endl;
-		rank_support_v<1> tt(&A);
-
-		*/
-		/*
-		cerr << tt.rank(0) << endl;
-		cerr << tt.rank(1) << endl;
-		cerr << tt.rank(2) << endl;
-		cerr << tt.rank(3) << endl;
-		cerr << tt.rank(4) << endl;
 		*/
 	//	cerr << r.b->size() << " " << size-1 << endl;
-		return r->rank1(size-1);
+		return r.rank1(size-1);
 	}
 
 	
@@ -144,31 +125,9 @@ class bbhash
 		vector <KeyType> collisions = keys;
 		while (!collisions.empty())
 		{
-			//level.resize(level.size()+1);
-//			for (size_t k = 0; k < level.size(); k++)
-//			{
-//				printf("%02x\n", ((char*)level[k].r->b)[0]);
-//				cerr << "XX1" << *(level[k].r->b) << endl;
-//				cerr << "DX1" << level[k].A << endl;
-//			}
-			cerr << collisions.size() << endl;
+//			cerr << collisions.size() << endl;
 			level.push_back(bb_level<KeyType>());
-//			for (size_t k = 0; k < level.size()-1; k++)
-//			{
-//				cerr << "DX2" << level[k].A << endl;
-//				printf("%02x\n", ((char*)level[k].r->b)[0]);
-//				cerr << "XX2" << *(level[k].r->b) << endl;
-//			}
 			collisions = level.back().init(collisions, gamma);
-//			cerr << "XXX" << endl;
-//			cerr << "DDD" << (*level.back().r.b) << endl;
-			//for (size_t k = 0; k < level.size(); k++)
-			//	cerr << "X" << level[k].r.size() << endl;
-//			for (size_t k = 0; k < level.size(); k++)
-//			{
-//				cerr << "XX" << *(level[k].r->b) << endl;
-//				cerr << "DX" << level[k].A << endl;
-//			}
 		}
 
 		cerr << level.size() << endl;
@@ -195,25 +154,35 @@ class bbhash
 		size_type sum = 0;
 		for (size_t i = 0; i < level.size(); i++)
 		{
-			cerr << "WW " << i << endl;
-//			cerr << (*level[i].r.b) << endl;
 			size_type ind = level[i].get_hash(key);
-			cerr << "ind: " << ind << endl;
-			
 //			cerr << i << " " << ind << " " << level[i].A.size() << " " << level[i].r.b->size() << endl;
 			if (level[i].A[ind] == 1)
 			{
-				return sum + level[i].r->rank1(ind);
+				return sum + level[i].r.rank1(ind)-1;
 			}
-			cerr << "YY" << endl;
-			cerr << level[i].A << endl;
-//			cerr << (*level[i].r.b) << endl;
 			sum += level[i].weight();
-			cerr << "YY" << endl;
 		}
 		cerr << "Key not found" << endl;
 		return sum;
 	}
+
+	size_type overhead()
+    {
+	    size_type sum = 0;
+	    for (auto l: level)
+	        sum += l.size();
+	    return sum;
+
+    }
+
+
+	void print()
+    {
+	    cout << "n:" << n << " , gamma:" << gamma << endl;
+	    cout << "levels:" << level.size() << endl;
+	    for (size_t i = 0; i < level.size(); i++)
+	        cout << "level-" << i << " : " << level[i].weight() << endl;
+    }
 
 };
 

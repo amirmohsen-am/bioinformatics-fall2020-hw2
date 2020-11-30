@@ -6,6 +6,22 @@
 using namespace std;
 //using namespace sdsl;
 
+string rand_str(int len = 30)
+{
+    string res;
+    for (int i = 0; i < len; i++)
+        res += rand()%26 + 'a';
+    return res;
+}
+
+vector <string> gen_strings(int n)
+{
+    vector <string> res;
+    for (int i = 0; i < n; i++)
+        res.push_back(rand_str());
+    return res;
+}
+
 int main()
 {
 
@@ -18,18 +34,21 @@ int main()
 	for (size_t i=0; i<=b.size(); i+= b.size()/4) 
 		cout << "(" << i << ", " << b_rank(i) << ") "; 
 		*/
-	
 
-	bit_vector t(10, 0);
-	cerr << t << endl;
-
+/*
 	vector <string> keys = {"a", "b", "c", "d", "WHY", "HA"};
 	bbhash<string> bb(keys, 1);
+
 	
-	for (auto key: keys)	
+	for (auto key: keys)
 	{
 		cerr << key << " " << bb.get(key) << endl;
 	}
+	cerr << bb.get("hiii");
+ */
+    vector <string> keys = gen_strings(1000);
+    bbhash<string> bb(keys, 1);
+    bb.print();
 
 //	vector <int> keys = {1, 1, 2};
 //	bbhash<int> bb(keys, 10);
