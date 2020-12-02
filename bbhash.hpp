@@ -3,6 +3,8 @@
 #include "xxhash.h"
 #include <time.h>
 #include "hw1/rank_support/rank_support.hpp"
+#include <unordered_set>
+#include <unordered_map>
 
 using namespace std;
 //using namespace sdsl;
@@ -12,10 +14,12 @@ typedef uint64_t size_type;
 template <class KeyType> 
 class bbhash;
 
+static const size_type MAX_LEVEL = 25;
+
 template <class KeyType> 
 class bb_level
 {
-	public:
+public:
 	size_type size;
 	size_type seed;
 	bit_vector A;
@@ -25,11 +29,11 @@ class bb_level
 
 
 	// DEBUG
-	vector <KeyType> keys;
+//	vector <KeyType> keys;
 	
 //	bbhash *bb;
 
-	vector<KeyType> init(vector<KeyType> keys, size_type gamma)
+	vector<KeyType> init(vector<KeyType> keys, double gamma)
 	{
 		this->size = keys.size() * gamma;
 		this->seed = rand(); // TODO
@@ -40,7 +44,7 @@ class bb_level
 		A = bit_vector(sz, 0);
 		C = bit_vector(sz, 0);
 
-		this->keys = keys;
+//		this->keys = keys;
 
 		vector<KeyType> collisions;
 
@@ -106,15 +110,23 @@ template <class KeyType>
 class bbhash
 {
 	public:
-	size_type gamma;
+    double gamma;
 	size_type n;
-	vector<KeyType> keys;
+	//vector<KeyType> keys;
 
 	vector<bb_level<KeyType> > level;
+
+	unordered_map<KeyType, size_type> terminal_map;
 	
 
-	bbhash(vector <KeyType> keys, size_type gamma)
-	{
+
+	bbhash(vector <KeyType> keys, double gamma)
+    {
+        {
+            // better collision check TODO
+            unordered_set<KeyType> uq(keys.begin(), keys.end());
+            assert(uq.size() == keys.size());
+        }
 		//srand(time(NULL));
 		n = keys.size();
 //		this->keys = keys;
@@ -123,21 +135,32 @@ class bbhash
 		assert (n > 0);
 
 		vector <KeyType> collisions = keys;
-		while (!collisions.empty())
+		for (size_t i = 0; i < MAX_LEVEL && !collisions.empty(); i++)
 		{
 //			cerr << collisions.size() << endl;
 			level.push_back(bb_level<KeyType>());
 			collisions = level.back().init(collisions, gamma);
 		}
 
-		cerr << level.size() << endl;
-		for (auto l: level)
-		{
-			cerr << l.keys.size() << " ";
-			for(auto key: l.keys) 
-				cerr << key << " ";
-			cerr << endl;
-		}
+		size_type all_weights = keys.size()-collisions.size();
+		if (!collisions.empty())
+        {
+		    for (auto key: collisions)
+                if (terminal_map.find(key) == terminal_map.end())
+                {
+                    size_type ind = terminal_map.size();
+                    terminal_map[key] = all_weights+ind;
+                }
+        }
+
+		//cerr << level.size() << endl;
+//		for (auto l: level)
+//		{
+//			cerr << l.keys.size() << " ";
+//			for(auto key: l.keys)
+//				cerr << key << " ";
+//			cerr << endl;
+//		}
 		/*
 		for (size_t k = 0; k < level.size(); k++)
 		{
@@ -145,12 +168,12 @@ class bbhash
 			cerr << "D" << level[k].A.size() << endl;
 		}
 		*/
+//		cout << "Test" << endl;
 		
 	}
 
 	size_type get(KeyType key)
 	{
-
 		size_type sum = 0;
 		for (size_t i = 0; i < level.size(); i++)
 		{
@@ -162,17 +185,33 @@ class bbhash
 			}
 			sum += level[i].weight();
 		}
-		cerr << "Key not found" << endl;
+        if (terminal_map.find(key) != terminal_map.end())
+            return terminal_map[key];
+        sum += terminal_map.size();
+
+        cerr << "Key not found: " << key << endl;
 		return sum;
 	}
 
+
+	// in bytes
+	size_type overhead_bitvectors()
+    {
+        size_type sum = 0;
+        for (auto l: level)
+            sum += l.size;
+        return sum/8;
+    }
+
 	size_type overhead()
     {
-	    size_type sum = 0;
-	    for (auto l: level)
-	        sum += l.size();
-	    return sum;
-
+	    size_type th = 0;
+	    if (is_same<KeyType, string>::value)
+	        for (auto it: terminal_map)
+	            th += it.first.size()+sizeof(size_type);
+	    else
+            th = terminal_map.size() * (sizeof(KeyType) + sizeof(size_type));
+	    return overhead_bitvectors() + th;
     }
 
 
@@ -182,6 +221,10 @@ class bbhash
 	    cout << "levels:" << level.size() << endl;
 	    for (size_t i = 0; i < level.size(); i++)
 	        cout << "level-" << i << " : " << level[i].weight() << endl;
+        cout << "terminal hash table size: " << terminal_map.size() << endl;
+
+        cout << "bitvector overhead: " << overhead_bitvectors() << endl;
+        cout << "all overhead: " << overhead() << endl;
     }
 
 };

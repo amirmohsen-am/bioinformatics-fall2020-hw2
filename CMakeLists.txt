@@ -9,10 +9,11 @@ include_directories(hw1/rank_support)
 include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 
-add_definitions("-lsdsl -ldivsufsort -ldivsufsort64")
+#add_definitions("-lsdsl -ldivsufsort -ldivsufsort64")
 
+#add_executable(bioinformatics_fall2020_hw2__copy_
+#        run_bbhash.cpp
+#        xxhash.c)
 add_executable(bioinformatics_fall2020_hw2__copy_
-        run_bbhash.cpp
-        xxhash.c)
-
+        xxhash.c test_bbhash.cpp)
 target_link_libraries(bioinformatics_fall2020_hw2__copy_ sdsl)
