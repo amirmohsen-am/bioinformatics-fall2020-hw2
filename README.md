@@ -8,7 +8,8 @@ https://rob-p.github.io/CMSC858D_F20/assignments/03_homework_02
 # References
 <a href="https://arxiv.org/abs/1702.03154">[1]</a> 
 Limasset, Antoine, et al. "Fast and scalable minimal perfect hashing for massive key sets." arXiv preprint arXiv:1702.03154 (2017).
-<a href=>[2]</a> xxHash: Extremely fast non-cryptographic hash algorithm 
+
+<a href="https://github.com/Cyan4973/xxHash">[2]</a> xxHash: Extremely fast non-cryptographic hash algorithm 
 
 # libraries
 
